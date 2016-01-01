@@ -1,0 +1,15 @@
+configuration: Release
+
+before_build:
+  - nuget restore src\ObservablePropertyChanged.sln
+
+after_build:
+  - src\BuildNuGetPackage\bin\Release\BuildNuGetPackage.exe artifacts
+
+build:
+  parallel: true
+  project: src\ObservablePropertyChanged.sln
+  verbosity: minimal
+
+artifacts:
+  - path: artifacts\*.nupkg
