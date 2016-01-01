@@ -1,0 +1,8 @@
+<Window x:Class="ExampleApp.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="White">
+        <TextBox x:Name="Item" />
+    </Grid>
+</Window>
