@@ -3,9 +3,6 @@ configuration: Release
 before_build:
   - nuget restore src\ObservablePropertyChanged.sln
 
-after_build:
-  - src\BuildNuGetPackage\bin\Release\BuildNuGetPackage.exe artifacts
-
 build:
   parallel: true
   project: src\ObservablePropertyChanged.sln
@@ -15,4 +12,4 @@ cache:
   - packages -> **\packages.config
 
 artifacts:
-  - path: artifacts\*.nupkg
+  - path: src\artifacts\*.nupkg

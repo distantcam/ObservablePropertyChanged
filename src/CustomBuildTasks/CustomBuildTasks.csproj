@@ -37,10 +37,15 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GitLinkTask.cs" />
     <Compile Include="TaskItemExtensions.cs" />
     <Compile Include="CreatePackage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="GitLink, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\gitlink.2.3.0-unstable0022\lib\net45\GitLink.exe</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />

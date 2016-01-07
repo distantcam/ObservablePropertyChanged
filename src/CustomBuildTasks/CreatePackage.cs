@@ -57,6 +57,7 @@ namespace CustomBuildTasks
         private void InnerExecute()
         {
             var path = DestinationFolder.FullPath();
+            Directory.CreateDirectory(path);
 
             var propertyProvider = new PropertyProvider()
             {

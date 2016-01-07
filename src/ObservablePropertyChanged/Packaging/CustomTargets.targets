@@ -2,10 +2,16 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <UsingTask TaskName="CustomBuildTasks.CreatePackage" AssemblyFile="$(SolutionDir)\CustomBuildTasks\bin\$(Configuration)\CustomBuildTasks.dll" />
+    <UsingTask TaskName="CustomBuildTasks.GitLinkTask" AssemblyFile="$(SolutionDir)\CustomBuildTasks\bin\$(Configuration)\CustomBuildTasks.dll" />
 
     <Target Name="CreateNuGetPackage" AfterTargets="AfterBuild">
+        <CustomBuildTasks.GitLinkTask
+            SolutionDirectory="$(SolutionDir)"
+            TargetUrl="https://github.com/distantcam/ObservablePropertyChanged"
+            TargetBranch="master" />
+
         <CustomBuildTasks.CreatePackage
-            DestinationFolder="$(OutputPath)"
+            DestinationFolder="$(SolutionDir)\artifacts\"
             NuSpecFile="Packaging\ObservablePropertyChanged.nuspec"
             ReferenceLibrary="$(OutputPath)$(AssemblyName).dll"
             PackagesConfig="packages.config" />
