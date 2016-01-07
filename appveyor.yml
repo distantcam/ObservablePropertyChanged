@@ -11,5 +11,8 @@ build:
   project: src\ObservablePropertyChanged.sln
   verbosity: minimal
 
+cache:
+  - packages -> **\packages.config
+
 artifacts:
   - path: artifacts\*.nupkg

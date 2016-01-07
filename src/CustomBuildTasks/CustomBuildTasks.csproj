@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{59D52D47-A6C9-4E49-AEE9-7953797A7243}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{188CEC4E-14CB-43E1-892A-FDB0CD815724}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BuildNuGetPackage</RootNamespace>
-    <AssemblyName>BuildNuGetPackage</AssemblyName>
+    <RootNamespace>CustomBuildTasks</RootNamespace>
+    <AssemblyName>CustomBuildTasks</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,17 +33,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Assets\ObservablePropertyChanged.nuspec">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
+    <Compile Include="TaskItemExtensions.cs" />
+    <Compile Include="CreatePackage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
       <Private>True</Private>
@@ -55,14 +53,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ObservablePropertyChanged\ObservablePropertyChanged.csproj">
-      <Project>{fdd5df2e-a12f-4ad2-8eb8-794b5e450f58}</Project>
-      <Name>ObservablePropertyChanged</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\GitVersionTask.3.3.0\build\dotnet\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.3.0\build\dotnet\GitVersionTask.targets')" />

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NuGet;
 
-namespace BuildNuGetPackage
+namespace CustomBuildTasks
 {
-    class Program
+    public class CreatePackage : Task
     {
         class PropertyProvider : Dictionary<string, dynamic>, IPropertyProvider
         {
@@ -21,21 +24,39 @@ namespace BuildNuGetPackage
             }
         }
 
-        static void Main(string[] args)
+        [Required]
+        public ITaskItem DestinationFolder { get; set; }
+
+        [Required]
+        public ITaskItem NuSpecFile { get; set; }
+
+        [Required]
+        public ITaskItem ReferenceLibrary { get; set; }
+
+        public ITaskItem PackagesConfig { get; set; }
+
+        public override bool Execute()
         {
-            var path = "";
-
-            if (args.Length == 1)
+            try
             {
-                path = Path.GetFullPath(args[0]);
-
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+                InnerExecute();
+            }
+            catch (System.ComponentModel.DataAnnotations.ValidationException vex)
+            {
+                foreach (var line in Regex.Split(vex.Message, Environment.NewLine))
+                    Log.LogError(line);
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex, true, true, null);
             }
 
-            Environment.CurrentDirectory = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+            return !Log.HasLoggedErrors;
+        }
+
+        private void InnerExecute()
+        {
+            var path = DestinationFolder.FullPath();
 
             var propertyProvider = new PropertyProvider()
             {
@@ -44,24 +65,25 @@ namespace BuildNuGetPackage
 
             var packageBuilder = new PackageBuilder();
 
-            using (var spec = File.OpenRead(Path.Combine("Assets", "ObservablePropertyChanged.nuspec")))
+            using (var spec = File.OpenRead(NuSpecFile.FullPath()))
             {
                 var manifest = Manifest.ReadFrom(spec, propertyProvider, false);
                 packageBuilder.Populate(manifest.Metadata);
             }
 
-            packageBuilder.PopulateFiles("", new[] {
-                new ManifestFile { Source = "ObservablePropertyChanged.dll", Target = "lib" },
-                new ManifestFile { Source = "ObservablePropertyChanged.pdb", Target = "lib" }
-            });
+            packageBuilder.PopulateFiles("", new[] { new ManifestFile { Source = ReferenceLibrary.FullPath(), Target = "lib" } });
 
-            var packagesConfig = @"..\..\..\ObservablePropertyChanged\packages.config";
+            var debug = Path.ChangeExtension(ReferenceLibrary.FullPath(), ".pdb");
+            if (File.Exists(debug))
+            {
+                packageBuilder.PopulateFiles("", new[] { new ManifestFile { Source = debug, Target = "lib" } });
+            }
 
-            if (File.Exists(packagesConfig))
+            if (File.Exists(PackagesConfig.FullPath()))
             {
                 var dependencies = new List<PackageDependency>();
 
-                var doc = XDocument.Load(packagesConfig);
+                var doc = XDocument.Load(PackagesConfig.FullPath());
 
                 var packages = doc.Descendants()
                     .Where(x => x.Name == "package" && x.Attribute("developmentDependency")?.Value != "true")
@@ -77,7 +99,7 @@ namespace BuildNuGetPackage
 
             using (var file = new FileStream(packagePath, FileMode.Create))
             {
-                Console.WriteLine($"Saving file {packagePath}");
+                Log.LogMessage($"Saving file {packagePath}");
 
                 packageBuilder.Save(file);
             }

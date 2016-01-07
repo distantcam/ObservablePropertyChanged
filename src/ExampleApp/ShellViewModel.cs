@@ -61,6 +61,8 @@ namespace ExampleApp
             {
                 Trace.WriteLine(parameter);
             }
+
+            protected void OnCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
