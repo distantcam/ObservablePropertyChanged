@@ -9,9 +9,23 @@ namespace ExampleApp
     {
         public ShellViewModel()
         {
+            base.DisplayName = "Sample App";
+
             Message = new MessageCommand();
 
             this.WhenPropertyChanged(nameof(Item)).ExecuteCommand(Message);
+        }
+
+        public new object DisplayName
+        {
+            get
+            {
+                return base.DisplayName;
+            }
+            set
+            {
+                base.DisplayName = value.ToString();
+            }
         }
 
         private string item;

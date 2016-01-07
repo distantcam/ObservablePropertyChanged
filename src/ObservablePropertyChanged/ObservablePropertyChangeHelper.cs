@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Reflection;
 using System.Threading;
 
 namespace ObservablePropertyChanged
@@ -63,14 +63,14 @@ namespace ObservablePropertyChanged
             var propertyCache = GetOrAdd(getterCache, type, () => new Dictionary<string, Func<object, object>>());
             var getter = GetOrAdd(propertyCache, propertyName, () =>
             {
-                var property = type.GetProperties().FirstOrDefault(p => p.Name == propertyName);
+                var property = FindProperty(type, propertyName);
                 if (property == null)
                     return nullGetter;
 
                 var senderArg = Expression.Parameter(typeof(object));
                 Expression body = Expression.Property(
                         Expression.Convert(senderArg, type),
-                        propertyName);
+                        property);
                 if (property.PropertyType.IsValueType)
                     body = Expression.Convert(body, typeof(object));
 
@@ -78,6 +78,17 @@ namespace ObservablePropertyChanged
             });
 
             return getter;
+        }
+
+        private static PropertyInfo FindProperty(Type type, string propertyName)
+        {
+            PropertyInfo result = null;
+            while (result == null && type != null)
+            {
+                result = type.GetProperty(propertyName, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance);
+                type = type.BaseType;
+            }
+            return result;
         }
 
         private static TValue GetOrAdd<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> valueFunc)
