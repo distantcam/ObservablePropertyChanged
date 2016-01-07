@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -62,7 +63,7 @@ namespace ObservablePropertyChanged
             var propertyCache = GetOrAdd(getterCache, type, () => new Dictionary<string, Func<object, object>>());
             var getter = GetOrAdd(propertyCache, propertyName, () =>
             {
-                var property = type.GetProperty(propertyName);
+                var property = type.GetProperties().FirstOrDefault(p => p.Name == propertyName);
                 if (property == null)
                     return nullGetter;
 
