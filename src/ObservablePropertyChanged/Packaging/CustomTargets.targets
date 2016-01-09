@@ -6,7 +6,8 @@
 
     <Target Name="CreateNuGetPackage" AfterTargets="AfterBuild">
         <GitLinkTask
-            SolutionDirectory="$(SolutionDir)\.." />
+            SolutionDirectory="$(SolutionDir)\.."
+            ProjectName="$(MSBuildProjectName)" />
 
         <CreatePackage
             DestinationFolder="$(SolutionDir)\artifacts\"

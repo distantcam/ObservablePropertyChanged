@@ -8,7 +8,7 @@ before_build:
 build:
   parallel: true
   project: src\ObservablePropertyChanged.sln
-  verbosity: detailed
+  verbosity: minimal
 
 artifacts:
   - path: src\artifacts\*.nupkg
