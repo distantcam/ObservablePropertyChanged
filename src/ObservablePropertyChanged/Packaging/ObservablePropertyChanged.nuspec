@@ -4,7 +4,6 @@
         <id>ObservablePropertyChanged</id>
         <version>$version$</version>
         <title>ObservablePropertyChanged</title>
-        <developmentDependency>true</developmentDependency>
         <authors>Cameron MacFarland</authors>
         <owners>Cameron MacFarland</owners>
         <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
